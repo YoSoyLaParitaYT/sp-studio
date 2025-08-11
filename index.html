@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SP Studio - Estadísticas Simuladas</title>
+  <style>
+    body {
+      background-color: #0b1120;
+      color: #e0f2ff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1, h2 {
+      color: #60a5fa;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 40px;
+    }
+    .stat {
+      background-color: #1e293b;
+      padding: 25px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #2563eb66;
+      width: 180px;
+    }
+    .stat h3 {
+      font-size: 48px;
+      margin: 0;
+      color: #3b82f6;
+    }
+    .stat p {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SP Studio</h1>
+  <h2>Estadísticas del Bot (Simuladas)</h2>
+
+  <div class="stats">
+    <div class="stat">
+      <h3 id="servers">--</h3>
+      <p>Servidores</p>
+    </div>
+    <div class="stat">
+      <h3 id="users">--</h3>
+      <p>Usuarios</p>
+    </div>
+    <div class="stat">
+      <h3 id="commands">--</h3>
+      <p>Comandos</p>
+    </div>
+  </div>
+
+  <script>
+    // Aquí defines tus números simulados:
+    const fakeStats = {
+      servers: 0,
+      users: 0,
+      commands: 0c
+    };
+
+    // Mostrar en la página:
+    document.getElementById('servers').textContent = fakeStats.servers;
+    document.getElementById('users').textContent = fakeStats.users;
+    document.getElementById('commands').textContent = fakeStats.commands;
+  </script>
+
+   <script src="index.js"></script>
+
+ 
+</body>
+</html>
