@@ -21,7 +21,7 @@ class PariFlix_Backend_Tester:
         self.auth_token = None
         self.test_user_data = {
             "name": "Maria Rodriguez",
-            "email": "maria.rodriguez@example.com", 
+            "email": f"maria.rodriguez.{datetime.now().strftime('%Y%m%d%H%M%S')}@example.com", 
             "password": "SecurePass123!"
         }
         self.test_results = []
