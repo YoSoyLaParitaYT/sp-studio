@@ -184,7 +184,26 @@ class TMDBService:
             return trailers
         return []
     
-    async def get_genres(self) -> Dict:
+    async def get_now_playing_movies(self, page: int = 1) -> List[Dict]:
+        """Get currently playing movies"""
+        data = await self.make_request("/movie/now_playing", {"page": page})
+        if "results" in data:
+            return [self.process_movie_data(movie) for movie in data["results"]]
+        return []
+    
+    async def get_discover_movies(self, params: Dict) -> List[Dict]:
+        """Get movies using discover endpoint with custom parameters"""
+        data = await self.make_request("/discover/movie", params)
+        if "results" in data:
+            return [self.process_movie_data(movie) for movie in data["results"]]
+        return []
+    
+    async def get_discover_tv(self, params: Dict) -> List[Dict]:
+        """Get TV shows using discover endpoint with custom parameters"""
+        data = await self.make_request("/discover/tv", params)
+        if "results" in data:
+            return [self.process_movie_data(movie) for movie in data["results"]]
+        return []
         """Get all available genres"""
         movie_genres = await self.make_request("/genre/movie/list")
         tv_genres = await self.make_request("/genre/tv/list")
