@@ -5,6 +5,22 @@ import { Card, CardContent } from './ui/card';
 
 const MovieCard = ({ movie, onPlay, onAddToList, onMoreInfo, isInList }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  // Fallback image if TMDB image fails
+  const fallbackImage = "https://via.placeholder.com/300x450/1a1a1a/ffffff?text=No+Image";
+  
+  // Use poster_path if available, otherwise use backdrop_path
+  const imageUrl = !imageError ? (movie.poster_path || movie.backdrop_path || fallbackImage) : fallbackImage;
 
   return (
     <div
@@ -14,13 +30,31 @@ const MovieCard = ({ movie, onPlay, onAddToList, onMoreInfo, isInList }) => {
     >
       <Card className="bg-transparent border-none overflow-hidden">
         <CardContent className="p-0">
-          <div className="relative aspect-video overflow-hidden rounded-lg">
+          <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-800">
+            {/* Loading skeleton */}
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 bg-gray-700 animate-pulse flex items-center justify-center">
+                <div className="text-gray-400 text-sm">Cargando...</div>
+              </div>
+            )}
+            
             <img
-              src={movie.poster_path}
-              alt={movie.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              src={imageUrl}
+              alt={movie.title || 'Película'}
+              className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-110 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               loading="lazy"
+              onError={handleImageError}
+              onLoad={handleImageLoad}
             />
+            
+            {/* Movie title overlay for better identification */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+              <h4 className="text-white text-sm font-medium line-clamp-2">
+                {movie.title || movie.name || 'Sin título'}
+              </h4>
+            </div>
             
             {/* Hover Overlay */}
             {isHovered && (
@@ -40,7 +74,7 @@ const MovieCard = ({ movie, onPlay, onAddToList, onMoreInfo, isInList }) => {
           {isHovered && (
             <div className="absolute top-full left-0 right-0 z-50 bg-gray-900 rounded-b-lg shadow-2xl p-4 transform transition-all duration-300 group-hover:translate-y-0">
               <h3 className="text-white font-semibold text-lg mb-2 line-clamp-2">
-                {movie.title}
+                {movie.title || movie.name || 'Sin título'}
               </h3>
               
               {/* Action Buttons */}
@@ -57,7 +91,9 @@ const MovieCard = ({ movie, onPlay, onAddToList, onMoreInfo, isInList }) => {
                   onClick={() => onAddToList(movie)}
                   size="icon"
                   variant="ghost"
-                  className="text-white hover:bg-white/10 rounded-full w-8 h-8 border border-white/30"
+                  className={`text-white hover:bg-white/10 rounded-full w-8 h-8 border border-white/30 ${
+                    isInList ? 'bg-white/20' : ''
+                  }`}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -84,22 +120,25 @@ const MovieCard = ({ movie, onPlay, onAddToList, onMoreInfo, isInList }) => {
               <div className="text-white/80 text-sm space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="bg-green-600 px-2 py-0.5 rounded text-xs font-bold">
-                    {Math.round(movie.vote_average * 10)}% coincidencia
+                    {Math.round((movie.vote_average || 0) * 10)}% coincidencia
                   </span>
                   <span className="border border-white/30 px-1.5 py-0.5 rounded text-xs">HD</span>
+                  {movie.adult && (
+                    <span className="bg-red-600 px-1.5 py-0.5 rounded text-xs font-bold">+18</span>
+                  )}
                 </div>
                 
                 <div className="flex items-center gap-2 text-xs">
-                  <span>{movie.release_date?.split('-')[0] || '2024'}</span>
+                  <span>{(movie.release_date || movie.first_air_date || '').split('-')[0] || '2024'}</span>
                   {movie.runtime && <span>{movie.runtime} min</span>}
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                    <span>{movie.vote_average?.toFixed(1) || 'N/A'}</span>
+                    <span>{(movie.vote_average || 0).toFixed(1)}</span>
                   </div>
                 </div>
                 
                 <p className="text-xs line-clamp-2 leading-relaxed mt-2">
-                  {movie.overview}
+                  {movie.overview || 'Sin descripción disponible.'}
                 </p>
               </div>
             </div>
