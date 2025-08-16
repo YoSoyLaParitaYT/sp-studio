@@ -201,47 +201,100 @@ class TMDBService:
         return genres
     
     async def get_netflix_style_content(self) -> Dict[str, List[Dict]]:
-        """Get Netflix-style categorized content"""
+        """Get Netflix-style categorized content with more variety and recent releases"""
         try:
-            # Get various categories concurrently
+            # Get various categories concurrently with more pages for variety
             results = await asyncio.gather(
                 self.get_trending_movies("day"),
                 self.get_trending_tv("day"),
                 self.get_popular_movies(1),
+                self.get_popular_movies(2),  # Get more popular movies
                 self.get_popular_tv(1),
+                self.get_popular_tv(2),      # Get more popular TV shows
                 self.get_top_rated_movies(1),
+                self.get_now_playing_movies(),  # Current releases
                 self.get_movies_by_genre(28, 1),  # Action
+                self.get_movies_by_genre(28, 2),  # More Action
                 self.get_movies_by_genre(35, 1),  # Comedy  
+                self.get_movies_by_genre(35, 2),  # More Comedy
                 self.get_movies_by_genre(18, 1),  # Drama
+                self.get_movies_by_genre(18, 2),  # More Drama
                 self.get_movies_by_genre(878, 1), # Sci-Fi
                 self.get_movies_by_genre(27, 1),  # Horror
+                self.get_movies_by_genre(53, 1),  # Thriller
+                self.get_movies_by_genre(14, 1),  # Fantasy
+                self.get_movies_by_genre(12, 1),  # Adventure
+                self.get_movies_by_genre(16, 1),  # Animation
+                self.get_tv_by_genre(18, 1),      # TV Drama
+                self.get_tv_by_genre(35, 1),      # TV Comedy
+                self.get_tv_by_genre(80, 1),      # Crime TV
                 return_exceptions=True
             )
             
-            trending_movies, trending_tv, popular_movies, popular_tv, top_rated, action, comedy, drama, scifi, horror = results
+            (trending_movies, trending_tv, popular_movies_1, popular_movies_2, 
+             popular_tv_1, popular_tv_2, top_rated, now_playing,
+             action_1, action_2, comedy_1, comedy_2, drama_1, drama_2,
+             scifi, horror, thriller, fantasy, adventure, animation,
+             tv_drama, tv_comedy, tv_crime) = results
             
-            # Combine and organize content
+            # Combine and organize content with more variety
             content = {
                 "trending": (trending_movies or []) + (trending_tv or []),
-                "popular_movies": popular_movies or [],
-                "popular_series": popular_tv or [],
+                "now_playing": now_playing or [],
+                "popular_movies": (popular_movies_1 or []) + (popular_movies_2 or []),
+                "popular_series": (popular_tv_1 or []) + (popular_tv_2 or []),
                 "top_rated": top_rated or [],
-                "action": action or [],
-                "comedy": comedy or [],
-                "drama": drama or [],
+                "action": (action_1 or []) + (action_2 or []),
+                "comedy": (comedy_1 or []) + (comedy_2 or []),
+                "drama": (drama_1 or []) + (drama_2 or []),
                 "scifi": scifi or [],
-                "horror": horror or []
+                "horror": horror or [],
+                "thriller": thriller or [],
+                "fantasy": fantasy or [],
+                "adventure": adventure or [],
+                "animation": animation or [],
+                "tv_drama": tv_drama or [],
+                "tv_comedy": tv_comedy or [],
+                "crime": tv_crime or [],
+                "netflix_originals": [],  # Will be populated below
+                "recently_added": []      # Will be populated below
             }
             
-            # Remove duplicates and limit results
+            # Get Netflix-like originals (high-rated recent content)
+            recent_high_rated = await self.get_discover_movies({
+                "sort_by": "vote_average.desc",
+                "vote_count.gte": 1000,
+                "primary_release_date.gte": "2020-01-01"
+            })
+            content["netflix_originals"] = recent_high_rated or []
+            
+            # Get recently added (recent releases)
+            recently_added = await self.get_discover_movies({
+                "sort_by": "primary_release_date.desc",
+                "primary_release_date.gte": "2024-01-01"
+            })
+            content["recently_added"] = recently_added or []
+            
+            # Remove duplicates and limit results, ensure we have video keys
             for category, movies in content.items():
                 seen_ids = set()
                 unique_movies = []
-                for movie in movies[:20]:  # Limit to 20 per category
-                    if movie.get("id") not in seen_ids:
+                for movie in movies[:40]:  # Increase limit for more content
+                    if movie.get("id") not in seen_ids and movie.get("backdrop_path"):
                         seen_ids.add(movie.get("id"))
+                        # Try to get video key for each movie
+                        if not movie.get("video_key"):
+                            try:
+                                if movie.get("title"):  # It's a movie
+                                    videos = await self.get_movie_videos(movie["id"])
+                                else:  # It's a TV show
+                                    videos = await self.get_tv_videos(movie["id"])
+                                if videos:
+                                    movie["video_key"] = videos[0].get("key")
+                            except:
+                                pass
                         unique_movies.append(movie)
-                content[category] = unique_movies
+                content[category] = unique_movies[:30]  # Limit to 30 per category
             
             return content
             
