@@ -136,8 +136,41 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
         <div className="relative z-10 -mt-32 pb-20">
           {content.trending?.length > 0 && (
             <MovieRow
-              title="Tendencias actuales"
+              title="🔥 Tendencias actuales"
               movies={content.trending}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.now_playing?.length > 0 && (
+            <MovieRow
+              title="🎬 En cines ahora"
+              movies={content.now_playing}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.recently_added?.length > 0 && (
+            <MovieRow
+              title="🆕 Recién agregadas"
+              movies={content.recently_added}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.netflix_originals?.length > 0 && (
+            <MovieRow
+              title="⭐ PariFlix Originales"
+              movies={content.netflix_originals}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
               onMoreInfo={handleMoreInfo}
@@ -147,7 +180,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {content.popular_series?.length > 0 && (
             <MovieRow
-              title="Series populares"
+              title="📺 Series populares"
               movies={content.popular_series}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
@@ -158,7 +191,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {content.popular_movies?.length > 0 && (
             <MovieRow
-              title="Películas populares"
+              title="🎭 Películas populares"
               movies={content.popular_movies}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
@@ -169,7 +202,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {content.action?.length > 0 && (
             <MovieRow
-              title="Acción y aventura"
+              title="💥 Acción y aventura"
               movies={content.action}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
@@ -180,7 +213,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {content.comedy?.length > 0 && (
             <MovieRow
-              title="Comedias"
+              title="😂 Comedias"
               movies={content.comedy}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
@@ -189,21 +222,10 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
             />
           )}
 
-          {content.drama?.length > 0 && (
+          {content.thriller?.length > 0 && (
             <MovieRow
-              title="Dramas"
-              movies={content.drama}
-              onPlay={handlePlay}
-              onAddToList={handleAddToList}
-              onMoreInfo={handleMoreInfo}
-              userList={userList}
-            />
-          )}
-
-          {content.scifi?.length > 0 && (
-            <MovieRow
-              title="Ciencia ficción"
-              movies={content.scifi}
+              title="😰 Thrillers"
+              movies={content.thriller}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
               onMoreInfo={handleMoreInfo}
@@ -213,8 +235,63 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {content.horror?.length > 0 && (
             <MovieRow
-              title="Terror"
+              title="👻 Terror"
               movies={content.horror}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.scifi?.length > 0 && (
+            <MovieRow
+              title="🚀 Ciencia ficción"
+              movies={content.scifi}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.drama?.length > 0 && (
+            <MovieRow
+              title="🎭 Dramas"
+              movies={content.drama}
+              onPlay={handlePlay}
+              onAddToList={handleAddToLisnt}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.fantasy?.length > 0 && (
+            <MovieRow
+              title="🧙‍♂️ Fantasía"
+              movies={content.fantasy}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.animation?.length > 0 && (
+            <MovieRow
+              title="🎨 Animación"
+              movies={content.animation}
+              onPlay={handlePlay}
+              onAddToList={handleAddToList}
+              onMoreInfo={handleMoreInfo}
+              userList={userList}
+            />
+          )}
+
+          {content.crime?.length > 0 && (
+            <MovieRow
+              title="🕵️ Crimen"
+              movies={content.crime}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
               onMoreInfo={handleMoreInfo}
@@ -224,7 +301,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {content.top_rated?.length > 0 && (
             <MovieRow
-              title="Mejor valoradas"
+              title="🏆 Mejor valoradas"
               movies={content.top_rated}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
@@ -235,7 +312,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
 
           {myListMovies.length > 0 && (
             <MovieRow
-              title="Mi lista"
+              title="❤️ Mi lista"
               movies={myListMovies}
               onPlay={handlePlay}
               onAddToList={handleAddToList}
