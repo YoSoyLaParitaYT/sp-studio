@@ -260,7 +260,7 @@ const HomePage = ({ user, onSignOut, onUpdateProfile }) => {
               title="🎭 Dramas"
               movies={content.drama}
               onPlay={handlePlay}
-              onAddToList={handleAddToLisnt}
+              onAddToList={handleAddToList}
               onMoreInfo={handleMoreInfo}
               userList={userList}
             />
