@@ -54,11 +54,36 @@ const SignupPage = ({ onSignup, onSwitchToLogin }) => {
     
     setIsLoading(true);
     
-    // Simulate signup
-    setTimeout(() => {
-      onSignup(formData);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store token in localStorage
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        onSignup(data.user);
+      } else {
+        alert(data.detail || 'Error al crear la cuenta');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión. Inténtalo de nuevo.');
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const passwordValidation = validatePassword(formData.password);
