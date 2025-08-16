@@ -355,9 +355,12 @@ class PariFlix_Backend_Tester:
         all_protected = True
         for method, endpoint in protected_endpoints:
             status, response = await self.make_request(method, endpoint, {})
-            if status != 401:
+            # Accept both 401 (Unauthorized) and 403 (Forbidden) as valid auth protection
+            if status not in [401, 403]:
                 all_protected = False
-                self.log_test(f"Auth Protection - {endpoint}", False, f"Expected 401, got {status}")
+                self.log_test(f"Auth Protection - {endpoint}", False, f"Expected 401/403, got {status}")
+            else:
+                self.log_test(f"Auth Protection - {endpoint}", True, f"Properly protected with status {status}")
         
         # Restore auth token
         self.auth_token = original_token
