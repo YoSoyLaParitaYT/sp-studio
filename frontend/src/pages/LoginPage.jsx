@@ -17,21 +17,39 @@ const LoginPage = ({ onLogin, onSwitchToSignup }) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login
-    setTimeout(() => {
-      onLogin({
-        email,
-        password,
-        rememberMe
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store token in localStorage
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        onLogin(data.user);
+      } else {
+        alert(data.detail || 'Error al iniciar sesión');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión. Inténtalo de nuevo.');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleDiscordLogin = () => {
-    console.log('Discord login clicked');
-    // TODO: Implement Discord OAuth
-    onLogin({ provider: 'discord' });
+    // Removed Discord login functionality
   };
 
   return (
